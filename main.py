@@ -35,7 +35,9 @@ def submit():
         hidden = 'None'
 
     status = gift.gift(name, email, hidden, ip)
-    print(status)
+    print(status,flush=True)
+    print(request.headers,flush=True)
+
     if status == True:
         return render_template('success.html')
     else:

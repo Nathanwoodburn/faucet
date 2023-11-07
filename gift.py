@@ -10,10 +10,10 @@ def gift(name,email,referer, ip):
     global loaded
     global gifts
 
-    print("Name: " + name)
-    print("Email: " + email)
-    print("Referer: " + referer)
-    print("IP: " + ip)
+    print("Name: " + name,flush=True)
+    print("Email: " + email,flush=True)
+    print("Referer: " + referer,flush=True)
+    print("IP: " + ip,flush=True)
 
     path = '/data/gifts.json'
     if os.getenv('local') == 'true':
@@ -46,5 +46,5 @@ def gift(name,email,referer, ip):
     # Save the file
     with open(path, 'w') as f:
         json.dump(gifts, f)
-        
+
     return True
