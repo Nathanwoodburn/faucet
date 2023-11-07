@@ -6,6 +6,7 @@ dotenv.load_dotenv()
 loaded = False
 gifts = []
 
+
 def gift(name,email,referer, ip):
     global loaded
     global gifts
@@ -31,11 +32,12 @@ def gift(name,email,referer, ip):
         loaded = True
     
     # Check if the user has already submitted
-    for gift in gifts:
-        if gift['email'] == email:
-            return "You have already submitted a gift request"
-        if gift['ip'] == ip:
-            return "You have already submitted a gift request"
+    if ip != os.getenv('admin_ip'):
+        for gift in gifts:
+            if gift['email'] == email:
+                return "You have already submitted a gift request"
+            if gift['ip'] == ip:
+                return "You have already submitted a gift request"
         
     # Add the user to the list
     gifts.append({
