@@ -34,6 +34,8 @@ def gift(name,email,referer, ip):
     for gift in gifts:
         if gift['email'] == email:
             return "You have already submitted a gift request"
+        if gift['ip'] == ip:
+            return "You have already submitted a gift request"
         
     # Add the user to the list
     gifts.append({
