@@ -6,7 +6,10 @@ import gift
 
 app = Flask(__name__)
 dotenv.load_dotenv()
+address = 'hs1qr7d0xqsyatls47jf28gvm97twe8k606gspfpsz'
 
+if os.getenv('address') != None:
+    address = os.getenv('address')
 
 #Assets routes
 @app.route('/assets/<path:path>')
@@ -20,9 +23,9 @@ def index():
     params = request.args
     if 'r' in params:
         print("Referer: " + params['r'])
-        return render_template('index.html', hidden=params['r'])
+        return render_template('index.html', hidden=params['r'],address=address)
 
-    return render_template('index.html')
+    return render_template('index.html',address=address)
 
 
 @app.route('/', methods=['POST'])
@@ -47,9 +50,9 @@ def submit():
     print(status,flush=True)
 
     if status == True:
-        return render_template('success.html')
+        return render_template('success.html',address=address)
     else:
-        return render_template('error.html',error=status)
+        return render_template('error.html',error=status,address=address)
 
 # Special routes
 @app.route('/.well-known/wallets/<token>')
