@@ -76,11 +76,11 @@ def stats():
 
     # Loop through gifts
     referals = {}
-    for gift in gifts:
-        if gift['referer'] not in referals:
-            referals[gift['referer']] = 1
+    for gift_item in gifts:
+        if gift_item['referer'] not in referals:
+            referals[gift_item['referer']] = 1
         else:
-            referals[gift['referer']] += 1
+            referals[gift_item['referer']] += 1
         
     statsHTML = 'Total gifts: ' + str(len(gifts)) + '<br><br>'
     statsHTML += 'Referals:<br>'
@@ -88,7 +88,7 @@ def stats():
         statsHTML += referal + ': ' + str(referals[referal]) + '<br>'
 
 
-
+    statsHTML += '<br>Remaining HNS: ' + str(gift.balance()) + '<br>'
 
     return render_template('stats.html',address=address,stats=statsHTML)
 

@@ -117,3 +117,13 @@ def gift(name,email,referer, ip):
 
 
     return True
+
+def balance():
+    headers = {"Accept": "application/json", "Content-Type": "application/json"}
+    user_info = requests.get(nb_endpoint + "/api/user",headers=headers, cookies=cookies)
+    if user_info.status_code != 200:
+        return "Error getting user info:<br>" + user_info.text
+    user_info = user_info.json()
+    hns_balance = user_info['hns_balance']
+    hns_balance = int(hns_balance)/1000000
+    return hns_balance
