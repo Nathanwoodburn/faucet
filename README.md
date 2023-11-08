@@ -23,3 +23,4 @@ docker run -d \
 | max_gifts_per_interval | Maximum number of gifts to send per interval | 24 |
 | interval | Interval to send gifts (in seconds) | 86400 (24 hours) |
 | discord_webhook | Discord webhook to send notifications to | None |
+| api_key | API key for api gifts | None |

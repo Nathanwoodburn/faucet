@@ -75,6 +75,40 @@ def submit():
     else:
         return render_template('error.html',error=status,address=address)
 
+@app.route('/api', methods=['POST'])
+def api():
+    # Get from params
+    params = request.args
+    name = params['name']
+    email = params['email']
+    key = params['key']
+
+    if key != os.getenv('api_key'):
+        return jsonify({'error': 'Invalid API key', 'success': False})
+
+    if 'X-REAL-IP' in request.headers:
+        ip = request.headers['X-REAL-IP']
+
+    if 'X-Real-Ip' in request.headers:
+        ip = request.headers['X-Real-Ip']
+
+    # Validate email
+    try:
+        emailinfo = validate_email(email, check_deliverability=False)
+        email = emailinfo.normalized
+    except EmailNotValidError as e:
+        return jsonify({'error': 'Invalid email address', 'success': False})
+
+
+    status = gift.gift(name, email, "api", ip)
+    print(status,flush=True)
+
+    if status == True:
+        return jsonify({'success': True})
+    else:
+        return jsonify({'error': status, 'success': False})
+
+
 # Special routes
 @app.route('/.well-known/wallets/<token>')
 def send_wallet(token):
