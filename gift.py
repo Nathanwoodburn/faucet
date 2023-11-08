@@ -137,6 +137,7 @@ def gift(name,email,referer, ip):
     if send_name.status_code != 200:
         return "Error sending gift:<br>" + send_name.text
 
+    discord(domain,email,ip,referer)
 
     return True
 
@@ -149,3 +150,21 @@ def balance():
     hns_balance = user_info['hns_balance']
     hns_balance = int(hns_balance)/1000000
     return hns_balance
+
+def discord(domain, email,ip,referer):
+    url = os.getenv('discord_webhook')
+    if url == None:
+        return "No webhook set"
+    
+    payload = {
+        "content": "New gift request: " + domain + "\nSent to " + email + "\nIP: " + ip + "\nReferer: " + referer
+    }
+    response = requests.post(url, data=json.dumps(payload), headers={'Content-Type': 'application/json'})
+
+    # Check if the message was sent successfully
+    if response.status_code == 204:
+        print("Message sent successfully!")
+    else:
+        print(f"Failed to send message. Status code: {response.status_code}")
+        print(response.text)
+

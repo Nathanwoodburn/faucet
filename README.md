@@ -22,3 +22,4 @@ docker run -d \
 | max_price | Maximum price to pay for a domain (in HNS) | 5 |
 | max_gifts_per_interval | Maximum number of gifts to send per interval | 24 |
 | interval | Interval to send gifts (in seconds) | 86400 (24 hours) |
+| discord_webhook | Discord webhook to send notifications to | None |
