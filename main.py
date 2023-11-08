@@ -6,6 +6,7 @@ import gift
 import json
 import schedule
 import time
+from email_validator import validate_email, EmailNotValidError
 
 
 app = Flask(__name__)
@@ -36,7 +37,6 @@ def index():
         resp = make_response(render_template('index.html', hidden=params['r'],address=address))
         resp.set_cookie('r', params['r'], max_age=60*60*24)
         return resp
-
     return render_template('index.html',address=address)
 
 
@@ -58,6 +58,14 @@ def submit():
 
     if 'r' in request.cookies:
         hidden = request.cookies['r']
+
+    # Validate email
+    try:
+        emailinfo = validate_email(email, check_deliverability=False)
+        email = emailinfo.normalized
+    except EmailNotValidError as e:
+        return render_template('error.html',error='Invalid email address',address=address)
+
 
     status = gift.gift(name, email, hidden, ip)
     print(status,flush=True)
