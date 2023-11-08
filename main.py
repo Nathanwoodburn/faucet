@@ -37,11 +37,9 @@ def submit():
     ip = request.remote_addr
 
     if 'X-REAL-IP' in request.headers:
-        print("X-REAL-IP",flush=True)
         ip = request.headers['X-REAL-IP']
 
     if 'X-Real-Ip' in request.headers:
-        print("X-Real-Ip2",flush=True)
         ip = request.headers['X-Real-Ip']
 
     if hidden == '':

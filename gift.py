@@ -82,7 +82,7 @@ def gift(name,email,referer, ip):
         
         domain = domains_market['domains'][0]['name']
         print("Buying: " + domain,flush=True)
-        price = int(domains_market['domains'][0]['ammount'])
+        price = int(domains_market['domains'][0]['amount'])
         if price > max_price*1000000:
             return "Domain price too high<br>Check back in a few minutes"
         
