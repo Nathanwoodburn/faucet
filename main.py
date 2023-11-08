@@ -97,7 +97,7 @@ def stats():
         statsHTML += referal + ': ' + str(referals[referal]) + '<br>'
 
 
-    statsHTML += '<br>Remaining HNS: ' + str(gift.balance()) + '<br>'
+    statsHTML += '<br>Remaining balance: ' + str(gift.balance()) + ' HNS<br>'
 
     return render_template('stats.html',address=address,stats=statsHTML)
 
