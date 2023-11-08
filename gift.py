@@ -13,7 +13,7 @@ nbcookie = os.getenv('cookie')
 cookies = {"namebase-main": nbcookie}
 nb_endpoint = "https://www.namebase.io/"
 
-max_price = 4 # Max price to buy a domain at (in HNS)
+max_price = 5 # Max price to buy a domain at (in HNS)
 
 
 def gift(name,email,referer, ip):
@@ -103,6 +103,10 @@ def gift(name,email,referer, ip):
 
     # Add this name to gifts record
     gifts[-1]['domain'] = domain
+
+    # Save the file
+    with open(path, 'w') as f:
+        json.dump(gifts, f)
 
 
 

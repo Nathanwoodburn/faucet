@@ -3,6 +3,7 @@ import os
 import dotenv
 import requests
 import gift
+import json
 
 app = Flask(__name__)
 dotenv.load_dotenv()
@@ -60,16 +61,46 @@ def send_wallet(token):
     address = requests.get('https://nathan.woodburn.au/.well-known/wallets/'+token).text
     return make_response(address, 200, {'Content-Type': 'text/plain'})
 
+@app.route('/stats')
+def stats():
+    # Read the file
+    path = '/data/gifts.json'
+    if os.getenv('local') == 'true':
+        path = './gifts.json'
+
+    # Load file
+    gifts = []
+    if os.path.isfile(path):
+        with open(path, 'r') as f:
+            gifts = json.load(f)    
+
+    # Loop through gifts
+    referals = {}
+    for gift in gifts:
+        if gift['referer'] not in referals:
+            referals[gift['referer']] = 1
+        else:
+            referals[gift['referer']] += 1
+        
+    statsHTML = 'Total gifts: ' + str(len(gifts)) + '<br><br>'
+    statsHTML += 'Referals:<br>'
+    for referal in referals:
+        statsHTML += referal + ': ' + str(referals[referal]) + '<br>'
+
+
+
+
+    return render_template('stats.html',address=address,stats=statsHTML)
 
 @app.route('/<path:path>')
 def catch_all(path):
-    # If file exists, load it
-    if os.path.isfile('templates/' + path):
-        return render_template(path)
+    # # If file exists, load it
+    # if os.path.isfile('templates/' + path):
+    #     return render_template(path)
     
-    # Try with .html
-    if os.path.isfile('templates/' + path + '.html'):
-        return render_template(path + '.html')
+    # # Try with .html
+    # if os.path.isfile('templates/' + path + '.html'):
+    #     return render_template(path + '.html')
     return redirect('/')
 
 # 404 catch all
