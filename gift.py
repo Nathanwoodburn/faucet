@@ -14,11 +14,29 @@ cookies = {"namebase-main": nbcookie}
 nb_endpoint = "https://www.namebase.io/"
 
 max_price = 5 # Max price to buy a domain at (in HNS)
+previous_gifts = []
+max_gifts_per_interval = 24 # Max gifts per interval
+interval = 60*60*24 # 24 hours
 
+if os.getenv('max_price') == 'true':
+    max_price = int(os.getenv('max_price'))
+if os.getenv('max_gifts_per_interval') == 'true':
+    max_gifts_per_interval = int(os.getenv('max_gifts_per_interval'))
+if os.getenv('interval') == 'true':
+    interval = int(os.getenv('interval'))
 
 def gift(name,email,referer, ip):
     global loaded
     global gifts
+    global previous_gifts
+
+    recent_gifts = 0
+    for gift in previous_gifts:
+        if previous_gifts['time'] > time.time() - interval:
+            recent_gifts += 1
+
+    if recent_gifts > max_gifts_per_interval and ip != os.getenv('admin_ip'):
+        return "Too many gifts recently<br>Check back in a few minutes"
 
     print("Name: " + name,flush=True)
     print("Email: " + email,flush=True)
@@ -54,6 +72,10 @@ def gift(name,email,referer, ip):
         'email': email,
         'referer': referer,
         'ip': ip
+    })
+
+    previous_gifts.append({
+        'time': time.time()
     })
 
     # Save the file
