@@ -22,9 +22,17 @@ def send_report(path):
 @app.route('/')
 def index():
     params = request.args
+    if 'r' in request.cookies:
+        print("Referer: " + request.cookies['r'])
+        return render_template('index.html', hidden=request.cookies['r'],address=address)
+
+
     if 'r' in params:
         print("Referer: " + params['r'])
-        return render_template('index.html', hidden=params['r'],address=address)
+        # Set cookie
+        resp = make_response(render_template('index.html', hidden=params['r'],address=address))
+        resp.set_cookie('r', params['r'], max_age=60*60*24)
+        return resp
 
     return render_template('index.html',address=address)
 
@@ -44,6 +52,9 @@ def submit():
 
     if hidden == '':
         hidden = 'None'
+
+    if 'r' in request.cookies:
+        hidden = request.cookies['r']
 
     status = gift.gift(name, email, hidden, ip)
     print(status,flush=True)
