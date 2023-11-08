@@ -4,6 +4,9 @@ import dotenv
 import requests
 import gift
 import json
+import schedule
+import time
+
 
 app = Flask(__name__)
 dotenv.load_dotenv()
@@ -116,6 +119,29 @@ def catch_all(path):
 @app.errorhandler(404)
 def not_found(e):
     return redirect('/')
+
+def update_address():
+    global address
+    payload = {
+        "asset": "HNS",
+        # "timestamp": 1699411892673,
+        "timestamp": int(round(time.time() * 1000)),
+        "receiveWindow": 10000
+    }
+    nbcookie = os.getenv('cookie')
+    cookies = {"namebase-main": nbcookie}
+    headers = {"Accept": "application/json", "Content-Type": "application/json"}
+    r = requests.post('https://www.namebase.io/api/v0/deposit/address', data=json.dumps(payload), headers=headers, cookies=cookies)
+    address = r.json()['address']
+    print("Address updated: " + address,flush=True)
+
+
+update_address()
+
+# Schedule address update every hour
+schedule.every(1).hour.do(update_address)
+
+
 
 if __name__ == '__main__':
     app.run(debug=False, port=5000, host='0.0.0.0')
