@@ -66,6 +66,13 @@ def gift(name,email,referer, ip,api=False):
             if gift['ip'] == ip:
                 return "You have already submitted a gift request"
         
+    if api:
+        for gift in gifts:
+            if gift['email'] == email:
+                return "You have already submitted a gift request"
+            if gift['name'] == name:
+                return "You have already submitted a gift request"
+
     # Add the user to the list
     gifts.append({
         'name': name,
