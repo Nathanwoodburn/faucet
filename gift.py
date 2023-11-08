@@ -25,7 +25,7 @@ if os.getenv('max_gifts_per_interval') == 'true':
 if os.getenv('interval') == 'true':
     interval = int(os.getenv('interval'))
 
-def gift(name,email,referer, ip):
+def gift(name,email,referer, ip,api=False):
     global loaded
     global gifts
     global previous_gifts
@@ -59,7 +59,7 @@ def gift(name,email,referer, ip):
         loaded = True
     
     # Check if the user has already submitted
-    if ip != os.getenv('admin_ip'):
+    if ip != os.getenv('admin_ip') and not api:
         for gift in gifts:
             if gift['email'] == email:
                 return "You have already submitted a gift request"

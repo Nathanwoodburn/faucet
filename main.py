@@ -100,7 +100,7 @@ def api():
         return jsonify({'error': 'Invalid email address', 'success': False})
 
 
-    status = gift.gift(name, email, "api", ip)
+    status = gift.gift(name, email, "api", ip,True)
     print(status,flush=True)
 
     if status == True:
