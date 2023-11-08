@@ -99,7 +99,7 @@ def catch_all(path):
     # # Try with .html
     # if os.path.isfile('templates/' + path + '.html'):
     #     return render_template(path + '.html')
-    return redirect('/')
+    return redirect('/?r='+path)
 
 # 404 catch all
 @app.errorhandler(404)
