@@ -32,7 +32,7 @@ def gift(name,email,referer, ip,api=False):
 
     recent_gifts = 0
     for gift in previous_gifts:
-        if previous_gifts['time'] > time.time() - interval:
+        if gift['time'] > time.time() - interval:
             recent_gifts += 1
 
     if recent_gifts > max_gifts_per_interval and ip != os.getenv('admin_ip'):
