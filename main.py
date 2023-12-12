@@ -177,12 +177,21 @@ def update_address():
     if 'address' not in r.json():
         print("Error: " + r.text,flush=True)
         # Send alert via discord
-        webhook = os.getenv('webhook')
-        if webhook != None:
-            payload = {
-                "content": "Error: " + r.text
-            }
-            r = requests.post(webhook, data=json.dumps(payload), headers=headers)
+        url = os.getenv('discord_webhook')
+        if url == None:
+            return "No webhook set"
+    
+        payload = {
+            "content": "NB cookie has expired\n@everyone"
+        }
+        response = requests.post(url, data=json.dumps(payload), headers={'Content-Type': 'application/json'})
+
+        # Check if the message was sent successfully
+        if response.status_code == 204:
+            print("Message sent successfully!")
+        else:
+            print(f"Failed to send message. Status code: {response.status_code}")
+            print(response.text)
         return
 
     address = r.json()['address']
