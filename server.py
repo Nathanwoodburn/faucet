@@ -7,6 +7,7 @@ import os
 import dotenv
 import sys
 import json
+from apscheduler.schedulers.background import BackgroundScheduler
 
 
 class GunicornApp(BaseApplication):
@@ -24,6 +25,12 @@ class GunicornApp(BaseApplication):
         return self.application
 
 if __name__ == '__main__':
+    # Every hour
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(main.update_address, 'cron', hour='*')
+    scheduler.start()
+
+
     workers = os.getenv('WORKERS')
     threads = os.getenv('THREADS')
     if workers is None:

@@ -174,14 +174,22 @@ def update_address():
     cookies = {"namebase-main": nbcookie}
     headers = {"Accept": "application/json", "Content-Type": "application/json"}
     r = requests.post('https://www.namebase.io/api/v0/deposit/address', data=json.dumps(payload), headers=headers, cookies=cookies)
+    if 'address' not in r.json():
+        print("Error: " + r.text,flush=True)
+        # Send alert via discord
+        webhook = os.getenv('webhook')
+        if webhook != None:
+            payload = {
+                "content": "Error: " + r.text
+            }
+            r = requests.post(webhook, data=json.dumps(payload), headers=headers)
+        return
+
     address = r.json()['address']
     print("Address updated: " + address,flush=True)
 
 
 update_address()
-
-# Schedule address update every hour
-schedule.every(1).hour.do(update_address)
 
 
 
