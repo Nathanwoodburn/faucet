@@ -27,7 +27,7 @@ class GunicornApp(BaseApplication):
 if __name__ == '__main__':
     # Every hour
     scheduler = BackgroundScheduler()
-    scheduler.add_job(main.update_address, 'cron', hour='*')
+    scheduler.add_job(main.update_address, 'cron', hour='0')
     scheduler.start()
 
 
