@@ -102,7 +102,7 @@ def gift(name,email,referer, ip,api=False):
     tmpnames = names.json()
     domain = None
     for name in tmpnames['domains']:
-        if (name['expireBlock'] - tmpnames['currentHeight']) < EXPIRY_THRESHOLD:
+        if (name['expireBlock'] - tmpnames['currentHeight']) > EXPIRY_THRESHOLD:
             domain = name['name']
             break
     
