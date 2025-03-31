@@ -17,6 +17,7 @@ max_price = 5 # Max price to buy a domain at (in HNS)
 previous_gifts = []
 max_gifts_per_interval = 24 # Max gifts per interval
 interval = 60*60*24 # 24 hours
+EXPIRY_THRESHOLD = 144 * 35 # 35 days
 
 if os.getenv('max_price') == 'true':
     max_price = int(os.getenv('max_price'))
@@ -98,8 +99,15 @@ def gift(name,email,referer, ip,api=False):
     if names.status_code != 200:
         return "Error getting names:<br>" + names.text
 
-    names = names.json()
-    if len(names['domains']) == 0:
+    tmpnames = names.json()
+    domain = None
+    for name in tmpnames['domains']:
+        if (name['expireBlock'] - tmpnames['currentHeight']) < EXPIRY_THRESHOLD:
+            domain = name['name']
+            break
+    
+
+    if domain == None:
         domains_market = requests.get(nb_endpoint + "/api/domains/marketplace?offset=0&buyNowOnly=true&sortKey=price&sortDirection=asc&exclude=%2Cnumbers%2Chyphens%2Cunderscores&maxLength=10&offersOnly=false"
                          ,headers=headers, cookies=cookies)
         if domains_market.status_code != 200:
@@ -109,13 +117,26 @@ def gift(name,email,referer, ip,api=False):
         if len(domains_market['domains']) == 0:
             return "No domains available to gift<br>Check back in a few minutes"
         
-        domain = domains_market['domains'][0]['name']
+        for d in domains_market['domains']:
+            if d['amount'] > max_price*1000000:
+                continue
+            data = requests.post("https://www.namebase.io/api/domains/search",headers=headers,json={"domains":[d['name']]}, cookies=cookies)
+            if data.status_code != 200:
+                return "Error getting names:<br>" + data.text
+            data = data.json()
+            if data['domains'][0]['domainInfo']['name'] == d['name']:
+                return "Domain is not available<br>Check back in a few minutes"
+            if (data['domains'][0]['domainInfo']['expireBlock'] - data['currentHeight']) > EXPIRY_THRESHOLD:
+                domain = d['name']
+                break
+        
+        if domain == None:
+            return "No domains available to gift<br>Check back in a few minutes"
+        # Buy the domain
         print("Buying: " + domain,flush=True)
         price = int(domains_market['domains'][0]['amount'])
         if price > max_price*1000000:
             return "Domain price too high<br>Check back in a few minutes"
-        
-
 
         payload = {
             "listingId": domains_market['domains'][0]['id']
@@ -124,9 +145,6 @@ def gift(name,email,referer, ip,api=False):
         if buy.status_code != 200:
             return "Error buying name:<br>" + buy.text
         
-
-    else:
-        domain = names['domains'][0]['name']
     
     print("Gifting: " + domain,flush=True)
 
