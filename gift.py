@@ -127,7 +127,7 @@ def gift(name,email,referer, ip,api=False):
             data = data.json()
             if data['domains'][0]['domainInfo']['name'] != d['name']:
                 return "Something weird happened<br>Check back in a few minutes"
-            if (data['domains'][0]['domainInfo']['expireBlock'] - data['currentHeight']) > EXPIRY_THRESHOLD:
+            if (data['domains'][0]['domainInfo']['expireBlock'] - data['height']) > EXPIRY_THRESHOLD:
                 domain = d['name']
                 listing = d['id']
                 break
