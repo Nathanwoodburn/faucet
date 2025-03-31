@@ -117,29 +117,28 @@ def gift(name,email,referer, ip,api=False):
         if len(domains_market['domains']) == 0:
             return "No domains available to gift<br>Check back in a few minutes"
         
+        listing = None
         for d in domains_market['domains']:
-            if d['amount'] > max_price*1000000:
+            if int(d['amount']) > max_price*1000000:
                 continue
             data = requests.post("https://www.namebase.io/api/domains/search",headers=headers,json={"domains":[d['name']]}, cookies=cookies)
             if data.status_code != 200:
                 return "Error getting names:<br>" + data.text
             data = data.json()
-            if data['domains'][0]['domainInfo']['name'] == d['name']:
-                return "Domain is not available<br>Check back in a few minutes"
+            if data['domains'][0]['domainInfo']['name'] != d['name']:
+                return "Something weird happened<br>Check back in a few minutes"
             if (data['domains'][0]['domainInfo']['expireBlock'] - data['currentHeight']) > EXPIRY_THRESHOLD:
                 domain = d['name']
+                listing = d['id']
                 break
         
         if domain == None:
             return "No domains available to gift<br>Check back in a few minutes"
         # Buy the domain
         print("Buying: " + domain,flush=True)
-        price = int(domains_market['domains'][0]['amount'])
-        if price > max_price*1000000:
-            return "Domain price too high<br>Check back in a few minutes"
 
         payload = {
-            "listingId": domains_market['domains'][0]['id']
+            "listingId": listing
         }
         buy = requests.post(nb_endpoint + "/api/v0/marketplace/"+domain+"/buynow",headers=headers,data=json.dumps(payload), cookies=cookies)
         if buy.status_code != 200:
