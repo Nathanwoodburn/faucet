@@ -61,25 +61,35 @@ def gift(name,email,referer, ip,api=False):
     
     # Check if the user has already submitted
     if ip != os.getenv('admin_ip') and not api:
+        ip_first = ip.split('.')[0]
+        ip_block = 0
         for gift in gifts:
             if gift['email'] == email:
                 return "You have already submitted a gift request"
             if gift['ip'] == ip:
                 return "You have already submitted a gift request"
-        
+            if gift['ip'].startswith(ip_first):
+                if 'time' in gift and gift['time'] > (time.time() - interval*4):
+                    ip_block += 1
+                if 'time' not in gift:
+                    ip_block += 1
+                            
+        if ip_block > 2:
+            return "You have been rate limited<br>Contact Nathan.Woodburn if you think this is a mistake"
+
     if api:
         for gift in gifts:
             if gift['email'] == email:
                 return "You have already submitted a gift request"
             if gift['name'] == name:
                 return "You have already submitted a gift request"
-
     # Add the user to the list
     gifts.append({
         'name': name,
         'email': email,
         'referer': referer,
-        'ip': ip
+        'ip': ip,
+        'time': time.time()
     })
 
     previous_gifts.append({
