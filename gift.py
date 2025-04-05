@@ -26,11 +26,19 @@ if os.getenv('max_gifts_per_interval') == 'true':
 if os.getenv('interval') == 'true':
     interval = int(os.getenv('interval'))
 
+ONLY_API = False
+if os.getenv("ONLY_API") == 'true':
+    ONLY_API = True
+
 def gift(name,email,referer, ip,api=False):
     global loaded
     global gifts
     global previous_gifts
 
+
+    if ONLY_API and not api:
+        return "Sorry, the faucet is currently only available through the Discord bot<br>Check back in a few minutes or contact Nathan.Woodburn/"
+    
     recent_gifts = 0
     for gift in previous_gifts:
         if gift['time'] > time.time() - interval:
